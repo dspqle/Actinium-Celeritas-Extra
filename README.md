@@ -30,6 +30,11 @@ This build is **adapted for Actinium** (Actinium-compatible): the original Celer
 - Mod-name tooltips, per-type toast controls, a steady F3 debug screen, and renderer names in the F3 profiler pie chart.
 - Windowed, borderless, and fullscreen modes, plus Off, On, and Adaptive VSync.
 
+## Authors
+
+- **Sumire Labs**, **s12kuma01** (original add-on authors)
+- **dspqle** (Actinium adaptation)
+
 ## Credits
 
 - FlashyReese, creator of Sodium Extra
