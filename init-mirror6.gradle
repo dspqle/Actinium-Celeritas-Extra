@@ -1,0 +1,36 @@
+// init script v6: redirect CurseMaven -> local-maven, and repo.cleanroommc.com/releases -> local-releases mirror.
+// This avoids intermittent DNS/connection failures to the cleanroom maven host.
+def redirectCurse = { repo ->
+    try {
+        def url = repo.url.toString()
+        if (url.contains('curse.cleanroommc.com') || url.contains('curse.maven')) {
+            repo.setUrl('file:///root/local-maven')
+            println "[init-mirror] curse redirect ${url} -> file:///root/local-maven"
+        }
+    } catch (Exception e) {}
+}
+def redirectCleanroom = { repo ->
+    try {
+        def url = repo.url.toString()
+        if (url.contains('repo.cleanroommc.com')) {
+            repo.setUrl('file:///root/local-releases')
+            println "[init-mirror] cleanroom redirect ${url} -> file:///root/local-releases"
+        }
+    } catch (Exception e) {}
+}
+def rewrite = { repo -> redirectCurse(repo); redirectCleanroom(repo) }
+allprojects {
+    repositories {
+        all { repo -> rewrite(repo) }
+    }
+    buildscript {
+        repositories {
+            all { repo -> rewrite(repo) }
+        }
+    }
+}
+settingsEvaluated { settings ->
+    try {
+        settings.pluginManagement.repositories.all { repo -> rewrite(repo) }
+    } catch (Exception e) {}
+}

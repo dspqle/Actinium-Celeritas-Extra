@@ -1,0 +1,22 @@
+// init script v7: redirect curse -> local-maven, cleanroom -> local-releases, arcseekers -> local-arcseekers.
+def mk = { path -> { repo ->
+    try {
+        def url = repo.url.toString()
+        if (url.contains(path[0])) {
+            repo.setUrl(path[1])
+            println "[init-mirror] redirect ${url} -> ${path[1]}"
+        }
+    } catch (Exception e) {}
+} }
+def rewrite = { repo ->
+    try { if (repo.url.toString().contains('curse.cleanroommc.com') || repo.url.toString().contains('curse.maven')) repo.setUrl('file:///root/local-maven') } catch (Exception e) {}
+    try { if (repo.url.toString().contains('repo.cleanroommc.com')) repo.setUrl('file:///root/local-releases') } catch (Exception e) {}
+    try { if (repo.url.toString().contains('maven.arcseekers.com')) repo.setUrl('file:///root/local-arcseekers') } catch (Exception e) {}
+}
+allprojects {
+    repositories { all { repo -> rewrite(repo) } }
+    buildscript { repositories { all { repo -> rewrite(repo) } } }
+}
+settingsEvaluated { settings ->
+    try { settings.pluginManagement.repositories.all { repo -> rewrite(repo) } } catch (Exception e) {}
+}

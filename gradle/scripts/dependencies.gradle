@@ -1,0 +1,80 @@
+repositories {
+    // Other repositories described by default:
+    // CleanroomMC: https://maven.cleanroommc.com
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+    }
+    maven {
+        name = 'CleanroomCurseMaven'
+        url = 'https://curse.cleanroommc.com'
+    }
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+    }
+    maven {
+        name = 'CleanroomMC'
+        url = 'https://repo.cleanroommc.com/releases'
+    }
+    mavenCentral()
+    mavenLocal() // Must be last for caching to work
+}
+
+dependencies {
+    if (enable_lwjglx.toBoolean()) {
+        // Cleanroom LWJGL2-compat shim (provides org.lwjglx.opengl.Display & friends).
+        // The historical coordinate was com.cleanroommc:lwjglx:1.0.0, which is no longer hosted;
+        // the maintained artifact is lwjglxx (double-x), available on the Cleanroom release maven.
+        compileOnly "com.cleanroommc:lwjglxx:1.1.22"
+    }
+
+    // ---- Option-backend compile dependencies ----
+    // The mod ships two parallel option GUI implementations:
+    //   * CeleritasExtra*  -> Celeritas option API (legacy backend)
+    //   * ActiniumExtra*   -> Actinium option API (new backend, see dhj.embeddedt.embeddium.api)
+    // Both backends must be resolvable at compile time. Only ONE of them is present at runtime and
+    // is selected dynamically in CeleritasExtraMod#construct via Loader.isModLoaded(...).
+
+    // Celeritas: development jar placed in libs/ (not bundled / forced onto the runtime classpath).
+    // NOTE: do NOT route these through Unimined's modCompileOnly/remap() pipeline -- that only
+    // recognises full mod jars and would silently drop the plain dev jar from compileClasspath.
+    // Attach directly to compileOnly so the Celeritas option API classes are visible to javac.
+    fileTree(dir: 'libs', include: ['*.jar']).each { jar ->
+        compileOnly files(jar)
+    }
+
+    // Actinium: resolved from CurseMaven (same coordinate used by Celeritas Leaf Culling).
+    modCompileOnly "curse.maven:actinium-1-12-2-optimization-1650442:8981413"
+
+    // Example - Dependency descriptor:
+    // 'com.google.code.gson:gson:2.8.6' << group: com.google.code.gson, name:gson, version:2.8.6
+    // 'group:name:version:classifier' where classifier is optional
+
+    // Example - CurseMaven dependencies:
+    // 'curse.maven:had-enough-items-557549:4543375' << had-enough-items = project slug, 557549 = project id, 4543375 = file id
+    // Full documentation: https://cursemaven.com/
+
+    // Example - Modrinth dependencies:
+    // 'maven.modrinth:jei:4.16.1.1000' << jei = project name, 4.16.1.1000 = file version
+    // Full documentation: https://docs.modrinth.com/docs/tutorials/maven/
+
+    // Common dependency types (configuration):
+    // implementation = dependency available at both compile time and runtime
+    // runtimeOnly = runtime dependency
+    // compileOnly = compile time dependency
+    // annotationProcessor = annotation processing dependencies
+    // contain = bundle dependency jars into final artifact, will extract them in mod loading. Can be used as jar-in-jar
+    // shadow = bundle dependencies into shadow output artifact (relocation configurable in shadowJar task)
+    // modImplementation = mod dependency available at both compile time and runtime
+    // modCompileOnly = mod dependency available only at compile time
+    // modLibrary = won't be remapped but will be force-injected into the classpath later
+
+    // Transitive dependencies:
+    // (Dependencies that your dependency depends on)
+    // If you wish to exclude transitive dependencies in the described dependencies
+    // Use a closure as such:
+    // implementation ('com.google.code.gson:gson:2.8.6') {
+    //     transitive = false
+    // }
+}

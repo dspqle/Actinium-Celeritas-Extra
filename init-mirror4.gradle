@@ -1,0 +1,28 @@
+// init script v4: 只把 CurseMaven 重定向到本地文件仓库(Actinium)。
+// 不再改写 apache -> 华为云，避免破坏 unimined 的 minecraft 依赖解析。
+def rewrite = { repo ->
+    try {
+        def url = repo.url.toString()
+        if (url.contains('curse.cleanroommc.com') || url.contains('curse.maven')) {
+            repo.setUrl('file:///root/local-maven')
+            println "[init-mirror] redirect ${url} -> file:///root/local-maven"
+        }
+    } catch (Exception e) {}
+}
+
+allprojects {
+    repositories {
+        all { repo -> rewrite(repo) }
+    }
+    buildscript {
+        repositories {
+            all { repo -> rewrite(repo) }
+        }
+    }
+}
+
+settingsEvaluated { settings ->
+    try {
+        settings.pluginManagement.repositories.all { repo -> rewrite(repo) }
+    } catch (Exception e) {}
+}
