@@ -2,7 +2,7 @@
 
 ![Actinium - video settings interface](docs/compatibility-actinium.jpg)
 
-Celeritas Extra is an unofficial client-side add-on for [Actinium](https://github.com/kappa-maintainer/Celeritas-auto-build/releases), built to run on Cleanroom. It adds more graphics, particle, HUD, and window settings to the Actinium video settings screen.
+Celeritas Extra is an unofficial client-side add-on for [Actinium](https://github.com/Q-Engineering-Source/Actinium), built to run on Cleanroom. It adds more graphics, particle, HUD, and window settings to the Actinium video settings screen.
 
 The mod started as a port of features from Sodium Extra and Rubidium/Embeddium Extra. It also includes several additions and backports made specifically for the Cleanroom environment.
 
@@ -11,7 +11,7 @@ This build is **adapted for Actinium** (Actinium-compatible): the original Celer
 ## Requirements
 
 - [Cleanroom Loader](https://github.com/CleanroomMC/Cleanroom) 0.6.10-alpha or newer
-- [Actinium](https://github.com/kappa-maintainer/Celeritas-auto-build/releases) 2.4.0 or newer
+- [Actinium](https://github.com/Q-Engineering-Source/Actinium) 2.4.0 or newer
 
 ### Optional dependency
 
